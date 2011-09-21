@@ -3,15 +3,15 @@
   header('Content-Type: text/html; charset=utf-8');
   error_reporting(E_ALL|E_STRICT);
 
-//$link = mysql_connect('localhost:3306', 'root', 'mrroot');
-$link = mysql_connect('db381862885.db.1and1.com:3306', 'dbo381862885', 'mrroot1');
+$link = mysql_connect('localhost:3306', 'root', 'mrroot');
+//$link = mysql_connect('db381862885.db.1and1.com:3306', 'dbo381862885', 'mrroot1');
 if (!$link) {
   die('Could not connect: ' . mysql_error());
 }
 
 @mysql_set_charset("utf8");
-@mysql_select_db("db381862885") or die( "Unable to select database");
-//@mysql_select_db("vocab") or die( "Unable to select database");
+//@mysql_select_db("db381862885") or die( "Unable to select database");
+@mysql_select_db("vocab") or die( "Unable to select database");
 
 $altname = "none";
 if ((strcmp($_GET["src"], "de")==0) &&
