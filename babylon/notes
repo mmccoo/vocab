@@ -1,0 +1,50 @@
+
+g++ bgl_babylon.cc -lz -liconv -o bgl_babylon.exe
+
+
+mysql
+user: root
+pw: mrroot
+
+port 3306
+
+to empty a table:
+truncate defs;
+
+SET character_set_results='utf8';
+
+
+CREATE DATABASE vocab;
+
+alter database vocab default character set utf8 collate utf8_general_ci;
+use vocab; 
+
+create table defs (id int unsigned not null auto_increment unique primary key);
+alter  table defs add column def  varchar(1024);
+alter  table defs add column word varchar(128);
+create index word_index on defs(word);
+
+create table alternates (id int unsigned not null auto_increment unique primary key);
+alter  table alternates add column rid int after id;
+alter  table alternates add column word varchar(32) after id;
+create index word_index on alternates(word);
+
+
+bgl_babylon.exe | c:/
+
+
+
+;;;;;;;;;;;;;;;;;;;;
+;; set up unicode
+(prefer-coding-system       'utf-8)
+(set-default-coding-systems 'utf-8)
+(set-terminal-coding-system 'utf-8)
+(set-keyboard-coding-system 'utf-8)
+;; This from a japanese individual.  I hope it works.
+(setq default-buffer-file-coding-system 'utf-8)
+;; From Emacs wiki
+(setq x-select-request-type '(UTF8_STRING COMPOUND_TEXT TEXT STRING))
+;; MS Windows clipboard is UTF-16LE 
+(set-clipboard-coding-system 'utf-16le-dos)
+
+ ./bgl_babylon.exe bgls/Babylon_Hebrew_English.BGL | iconv -f "WINDOWS-1255" -t UTF-8 -c | /cygdrive/c/Perl64/bin/perl ./populate_sql.pl he en

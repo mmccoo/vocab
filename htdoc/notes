@@ -1,0 +1,2 @@
+http://localhost/jsonptest.php?symbol=IBM&callback=showPrice
+
