@@ -67,7 +67,7 @@ foreach (array("", $altname) as $prename) {
 }
 
 echo $_GET['callback'] . '(';
-echo json_encode(array("def" => $arr, "id"=> $wordid));
+echo json_encode(array("def" => $arr));
 echo ");";
 
 mysql_close($link);

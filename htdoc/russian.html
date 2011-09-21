@@ -9,18 +9,8 @@
     <script type="text/javascript" src="hotkeys.js"></script>          
     <script type="text/javascript" src="add_defs.js"></script>          
     <script type="text/javascript">                                         
-      // we will add our javascript code here                                     
-
-      $(document).ready(function() {
-        var v = new Vocab();
-        v.set_from_lang("en");
-        v.set_to_lang("ru");
-        moveBody();
-        v.create_sidebar_table();
-        v.add_p_defs();
-        //highlight_visible();
-      });
-      </script>
+      vocab_init("en", "ru");
+    </script>
 
   </head>
   <body class="calibre">

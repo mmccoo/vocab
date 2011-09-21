@@ -1,0 +1,23 @@
+{
+  "name": "Miles's vocabulary builder",
+  "version": "1.0",
+  "description": "This is my vocabulary builder extension.",
+  "browser_action": {
+    "default_icon": "chrome/icon.png"
+  },
+  "permissions": [
+    "http://api.flickr.com/"
+  ],
+  "content_scripts": [
+      {
+          "matches": ["http://mmccoo.com/vocab/*/content/*"],
+          "js": [
+              "htdoc/jquery-1.6.2.js",
+              "htdoc/hotkeys.js",
+              "htdoc/add_defs.js",
+              "chrome/myscript.js"
+          ]
+
+      }
+  ]
+}

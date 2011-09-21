@@ -1,9 +1,11 @@
 
-function vocab_init() {
+function vocab_init(src, tgt) {
       $(document).ready(function() {
           var v = new Vocab();
 
           moveBody();
+          v.set_from_lang(src);
+          v.set_to_lang(tgt);
           v.create_sidebar_table();
           v.add_p_defs();
           v.add_common_defs();         
