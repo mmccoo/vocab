@@ -1,7 +1,7 @@
 
-function vocab_init(src, tgt) {
+function vocab_init(src, tgt, sections) {
       $(document).ready(function() {
-          var v = new Vocab();
+          var v = new Vocab(sections);
 
           moveBody();
           v.set_from_lang(src);
@@ -32,7 +32,7 @@ function keys(obj)
 }
 
 
-function Vocab() {
+function Vocab(sections_in) {
     var x = 10;
     var word_rows = {};
     var word_order = [];
@@ -68,11 +68,17 @@ function Vocab() {
 	vobj.set_known();
     });
 
-    var sections = $('div')
-	.filter(function() {
-	    return this.className.match(/calibre/);
-	});
-    sections = sections.add('p');
+    var sections;
+    
+    if (sections_in) {
+        sections = sections_in;
+    } else {
+        sections = $('div')
+	    .filter(function() {
+	        return this.className.match(/calibre/);
+	    });
+        sections = sections.add('p');
+    }
 
     sections.each(function(index) {
 	var fn = function() {
@@ -222,6 +228,7 @@ function Vocab() {
         common_div.style.borderStyle="solid";
         common_div.style.borderWidth="1px";
         common_div.style.position="fixed";
+        common_div.style.zIndex="100";
 
         var common_buttons = document.createElement("div");
         
