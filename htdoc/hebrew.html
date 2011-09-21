@@ -11,17 +11,7 @@
     <script type="text/javascript" src="hotkeys.js"></script>          
     <script type="text/javascript" src="add_defs.js"></script>          
     <script type="text/javascript">                                         
-      // we will add our javascript code here                                     
-
-      $(document).ready(function() {
-        var v = new Vocab();
-        v.set_from_lang("he");
-        v.set_to_lang("en");
-        moveBody();
-        v.create_sidebar_table();
-        v.add_p_defs();
-        //highlight_visible();
-      });
+      vocab_init();
     </script>
 </head>
 

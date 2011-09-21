@@ -1,4 +1,15 @@
 
+function vocab_init() {
+      $(document).ready(function() {
+          var v = new Vocab();
+
+          moveBody();
+          v.create_sidebar_table();
+          v.add_p_defs();
+          v.add_common_defs();         
+      });
+}
+
 function nocase_compare(x,y) {
     return x.toString().toUpperCase().localeCompare(y.toString().toUpperCase());
 } 
