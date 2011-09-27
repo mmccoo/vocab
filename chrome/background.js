@@ -17,6 +17,18 @@ function onRequest(request, sender, callback) {
         localStorage.clear();
     }
         
+    if (request.action == 'setWordlistWord') {
+        set_wordlist_word(request.word, request.state);
+    }
+
+    if (request.action == 'getWordList') {
+        get_wordlist(callback);
+    }
+
+    if (request.action == 'showWordlist') {
+        show_word_list();
+    }
+
     if (request.action == 'getJSON') {
         $.getJSON(request.url, callback);
         //$.getJSON(request.url, function(data) { alert("here"); });

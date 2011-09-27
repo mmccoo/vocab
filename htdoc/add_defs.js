@@ -142,60 +142,6 @@ function Vocab(sections_in) {
         }
     }
 
-    this.show_word_list = function() {
-        var win=window.open('','','width=600,height=600')
-
-        var b = win.document.createElement("button");
-        b.appendChild(document.createTextNode("Print"));
-        win.document.body.appendChild(b);
-        $(b).click(function() { win.print() });
-
-        var t = win.document.createElement("table"); 
-        t.setAttribute("border", "1px");
-        t.style.borderSpacing = "0px";
-        t.style.width = "100%";
-        t.style.heigth = "90%";
-
-        get_wordlist(function(words) {
-            var num = 0;
-            var row = win.document.createElement("tr");
-
-            for(var w in words) {
-                (function(word) {
-                    var td = win.document.createElement("td");
-                    td.style.width = "30%";
-
-                    var but = document.createElement("input");
-                    but.setAttribute("type", "checkbox");
-                    td.appendChild(but);
-
-                    $(but).click(function() {
-                        set_wordlist_word(word, 0);
-                        td.parentNode.removeChild(td);
-                    });
-
-                    td.appendChild(win.document.createTextNode(word));
-
-                    var def = localStorage["def." + word]
-                    if (def) {
-                        td.appendChild(win.document.createTextNode(":" + def));
-                    }
-                    row.appendChild(td);
-                    num++;
-                    if ((num%3) == 0) {
-                        t.appendChild(row);
-                        row = win.document.createElement("tr");
-                    }
-                                })(words[w]);
-
-            }
-
-            t.appendChild(row);
-            row = win.document.createElement("tr");        
-
-            win.document.body.appendChild(t);
-        });
-    };
 
     this.show_known = function() {
         while(document.body.hasChildNodes()) {
@@ -282,7 +228,7 @@ function Vocab(sections_in) {
         var b = document.createElement("button");
         b.appendChild(document.createTextNode("Show wordlist"));
         buttons.appendChild(b);
-        $(b).click(this.show_word_list);
+        $(b).click(show_word_list);
 
 
 
