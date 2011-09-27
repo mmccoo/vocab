@@ -5,7 +5,7 @@ $(document).ready(function() {
 
     var sections = $(".font");
     sections.each(function(index) {
-        $(this).css("background", colors[index % 3]);
+//        $(this).css("background", colors[index % 3]);
     });
 
     vocab_init("de", "en", sections);

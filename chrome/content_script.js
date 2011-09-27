@@ -1,3 +1,6 @@
+
+window.inVocabContentScript = 1;
+
 jQuery.getJSON = function(url, callback) {
   console.log("calling JSON");
   chrome.extension.sendRequest({action:'getJSON',url:url}, callback);

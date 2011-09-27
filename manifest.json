@@ -11,34 +11,44 @@
     "background_page": "chrome/background.html",
     "content_scripts": [
         {
-            "matches": ["http://mmccoo.com/vocab/*/content/*"],
+            "matches": ["http://mmccoo.com/vocab/*/content/*", "http://localhost/*/content/*"],
             "js": [
                 "htdoc/jquery-1.6.2.js",
                 "htdoc/hotkeys.js",
                 "htdoc/add_defs.js",
+                "htdoc/get_def.js",
+                "chrome/content_script.js",
                 "chrome/myscript.js"
             ]
 
         },
-        {
-            "matches": ["http://www.stern.de/politik/deutschland/*.html"],
-            "js": [
-                "htdoc/jquery-1.6.2.js",
-                "htdoc/hotkeys.js",     
-                "htdoc/add_defs.js",
-                "chrome/content_script.js",
-                "chrome/stern.js"
-            ]
-
-        },
+        
         {
             "matches": ["http://www.spiegel.de/politik/deutschland/*.html"],
             "js": [
                 "htdoc/jquery-1.6.2.js",
                 "htdoc/hotkeys.js",     
                 "htdoc/add_defs.js",
+                "htdoc/get_def.js",
                 "chrome/content_script.js",
                 "chrome/spiegel.js"
+            ]
+
+        },
+        
+        {
+            "matches": ["http://www.brigitte.de/*/",
+                        "http://www.brigitte.de/*/*.html",
+                        "http://www.bild.de/*/*.html",
+                        "http://www.stern.de/*/*.html"
+                       ],
+            "js": [
+                "htdoc/jquery-1.6.2.js",
+                "htdoc/hotkeys.js",     
+                "htdoc/add_defs.js",
+                "htdoc/get_def.js",
+                "chrome/content_script.js",
+                "chrome/general.js"
             ]
 
         }

@@ -1,5 +1,13 @@
 
+if (typeof(window.console) === 'undefined') {
+    window.console = {
+        log: function(str) {}
+    };
+}
+
 function vocab_init(src, tgt, sections) {
+    console.log("calling Vocab init");
+
       $(document).ready(function() {
           var v = new Vocab(sections);
 
@@ -38,6 +46,7 @@ function Vocab(sections_in) {
     var word_order = [];
     var word_checked = {};
     var word_buttons = {};
+    var word_list = {};
     var current_sections = [];
     var top_p;
     var bottom_p;
@@ -109,7 +118,7 @@ function Vocab(sections_in) {
             if (!word_checked[w]) {
                 continue;
             }
-            localStorage["known." + w] = 1;
+            set_known(w);
             for (var i in word_rows[w]) {
                 var row = word_rows[w][i];
                 if (row && row.parentNode) {
@@ -120,11 +129,100 @@ function Vocab(sections_in) {
         }
     };
 
+    this.add_word_to_wordlist = function() {
+        for(var w in word_checked) {
+            if (!word_checked[w]) {
+                continue;
+            }
+
+            $(word_buttons[w]).attr('checked', false);
+            word_checked[w] = 0;
+
+            set_wordlist_word(w, 1);
+        }
+    }
+
+    this.show_word_list = function() {
+        var win=window.open('','','width=600,height=600')
+
+        var b = win.document.createElement("button");
+        b.appendChild(document.createTextNode("Print"));
+        win.document.body.appendChild(b);
+        $(b).click(function() { win.print() });
+
+        var t = win.document.createElement("table"); 
+        t.setAttribute("border", "1px");
+        t.style.borderSpacing = "0px";
+        t.style.width = "100%";
+        t.style.heigth = "90%";
+
+        get_wordlist(function(words) {
+            var num = 0;
+            var row = win.document.createElement("tr");
+
+            for(var w in words) {
+                (function(word) {
+                    var td = win.document.createElement("td");
+                    td.style.width = "30%";
+
+                    var but = document.createElement("input");
+                    but.setAttribute("type", "checkbox");
+                    td.appendChild(but);
+
+                    $(but).click(function() {
+                        set_wordlist_word(word, 0);
+                        td.parentNode.removeChild(td);
+                    });
+
+                    td.appendChild(win.document.createTextNode(word));
+
+                    var def = localStorage["def." + word]
+                    if (def) {
+                        td.appendChild(win.document.createTextNode(":" + def));
+                    }
+                    row.appendChild(td);
+                    num++;
+                    if ((num%3) == 0) {
+                        t.appendChild(row);
+                        row = win.document.createElement("tr");
+                    }
+                                })(words[w]);
+
+            }
+
+            t.appendChild(row);
+            row = win.document.createElement("tr");        
+
+            win.document.body.appendChild(t);
+        });
+    };
+
+    this.show_known = function() {
+        while(document.body.hasChildNodes()) {
+            document.body.removeChild(document.body.firstChild);
+        }
+
+        var table = document.createElement("table");
+        for (var elt in localStorage) {
+            if (!elt.match(/^known\./)) { continue; }
+            elt = elt.replace(/^known\./, "");
+
+            var tr = document.createElement("tr");
+            var td = document.createElement("td");
+            td.appendChild(document.createTextNode(elt));
+            tr.appendChild(td);
+            table.appendChild(tr);
+        }
+
+        document.body.appendChild(table);
+    }
+
     this.create_sidebar_table = function() {
         var d = document.createElement("div");
         d.style.position="fixed";
         d.style.top="0px";
         d.style.left="0px";
+        d.style.textAlign="left";
 
         d.style.width="400px";
 
@@ -144,6 +242,12 @@ function Vocab(sections_in) {
         $(b).click(function() {
             $(common_div).show();
         });
+
+        var b = document.createElement("button");
+        b.appendChild(document.createTextNode("Show Known"));
+        buttons.appendChild(b);
+        $(b).click(this.show_known);
+
 
         var b = document.createElement("button");
         b.appendChild(document.createTextNode("Select All"));
@@ -170,6 +274,18 @@ function Vocab(sections_in) {
 
         });
 
+        var b = document.createElement("button");
+        b.appendChild(document.createTextNode("Add word to wordlist"));
+        buttons.appendChild(b);
+        $(b).click(this.add_word_to_wordlist);
+
+        var b = document.createElement("button");
+        b.appendChild(document.createTextNode("Show wordlist"));
+        buttons.appendChild(b);
+        $(b).click(this.show_word_list);
+
+
+
         var localpopup = document.createElement("div");
         localpopup.style.top="50px";
         localpopup.style.left="500px";
@@ -177,6 +293,7 @@ function Vocab(sections_in) {
         localpopup.style.borderStyle="solid";
         localpopup.style.borderWidth="1px";
         localpopup.style.position="fixed";
+        localpopup.style.zIndex = 100;
         localpopup.appendChild(document.createTextNode("Clearing local clears the entire memory of your known words. You'll need to start over. Are you sure this is what you want to do?"));
         var localok = document.createElement("button");
         localok.appendChild(document.createTextNode("Ok"));
@@ -201,6 +318,27 @@ function Vocab(sections_in) {
         $(b).click(function() {
             $(localpopup).show();
         });
+
+        var b = document.createElement("button");
+        b.appendChild(document.createTextNode("Clear Global"));
+        buttons.appendChild(b);
+        $(b).click(function() {
+            chrome.extension.sendRequest({ action:'clearStorage'});
+        });
+
+
+        var b = document.createElement("button");
+        b.appendChild(document.createTextNode("Local2Global"));
+        buttons.appendChild(b);
+        $(b).click(function() {
+            for (var elt in localStorage) {
+                if (!elt.match(/^known\./)) { continue; }
+                if (localStorage[elt] != '1') { continue; }
+                elt = elt.replace(/^known\./, "");
+                set_known(elt);
+            }
+        });
+
 
         d.appendChild(buttons);
         document.body.appendChild(d);
@@ -228,6 +366,7 @@ function Vocab(sections_in) {
         common_div.style.borderStyle="solid";
         common_div.style.borderWidth="1px";
         common_div.style.position="fixed";
+        common_div.style.textAlign="left";
         common_div.style.zIndex="100";
 
         var common_buttons = document.createElement("div");
@@ -307,20 +446,14 @@ function Vocab(sections_in) {
                 }
                 
                 td = document.createElement("td");
-                var em = document.createElement("em");
+                var em = document.createElement("b");
                 em.appendChild(document.createTextNode(word + ": "));
                 td.appendChild(em);
 
-                if (localStorage["def." + word]) {
-                    td.appendChild(document.createTextNode(localStorage["def." + word])); 
-                } else {
-                    jQuery.getJSON("http://mmccoo.com/vocab/get_def.php?word=" + 
-                                   word + "&src=" + srclang + "&tgt=" + tgtlang + "&callback=?",
-                                   function(data) {
-                                       td.appendChild(document.createTextNode(data.def));              
-                                       localStorage["def." + word] = data.def;
-                                   });
-                }
+                get_def(word, srclang, tgtlang,
+                        function(def) { 
+                            td.appendChild(document.createTextNode(def)); 
+                        });
                 r.appendChild(td);
 
                 tableptr.appendChild(r);
@@ -329,6 +462,13 @@ function Vocab(sections_in) {
                 }
                 word_rows[word].push(r);
                 
+                is_known(word, function(known) {
+                    if (!known) { return; }
+                    for(var w in word_rows[word]) {
+                        word_rows[word][w].parentNode.removeChild(word_rows[word][w]);
+                    }
+                });
+
                 var i = 10;
             })(displayed_words[i]);
 	}
@@ -339,15 +479,21 @@ function Vocab(sections_in) {
 
         var text = str.split(/[\u0021-\u002f\u003a-\u0040\u005b-\u005f\u00A1-\u00BF\:\,\. \t\n]+/).sort(nocase_compare);
 	var lastSelected;
-        for(var str in text) {
-            var word = text[str];           
+        for(var i in text) {
+            var word = text[i];           
             if (word.length == 0) {
                 continue;
             }
             if (word.match(/^[0-9]+$/)) {
                 continue;
             }
-            if (localStorage["known." + word]) { continue; }
+
+            // at this point I'll only exclude words if they're already known in thei localstorage
+            // in the next section. I use the get known function which will delete a row.
+            if (localStorage["known." + word] && (localStorage["known." + word] == '1')) { 
+                window.console.log("skipping " + word);
+                continue; 
+            }
 	    numadded++;
             if (displayed_words[word] == undefined) {
                 displayed_words[word] = 0;

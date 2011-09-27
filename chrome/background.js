@@ -1,4 +1,22 @@
 function onRequest(request, sender, callback) {
+    if (request.action == 'getDef') {
+        get_def(request.word, 
+                request.srclang,
+                request.tgtlang,
+                callback);
+    }
+    if (request.action == 'isKnown') {
+        is_known(request.word, callback);
+    }
+
+    if (request.action == 'setKnown') {
+        set_known(request.word);
+    }
+
+    if (request.action == 'clearStorage') {
+        localStorage.clear();
+    }
+        
     if (request.action == 'getJSON') {
         $.getJSON(request.url, callback);
         //$.getJSON(request.url, function(data) { alert("here"); });
@@ -21,3 +39,4 @@ function onRequest(request, sender, callback) {
 }
 
 chrome.extension.onRequest.addListener(onRequest);
+

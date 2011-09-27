@@ -4,3 +4,7 @@
 added the ability to pass a sections list to the vocab class. This enables me to adjust to different websites.
 Added support for stern.de and spiegel.de
 Added background script to handle the cross-domain requests.
+
+
+9/23/2011
+completed support of the background page. known words and defs are shared across domains.
